@@ -5,6 +5,10 @@ guide-section: "Getting Started"
 
 End-to-end recipe for economists who already know the LIC-DSF template.
 
+**Edit inputs in Excel.** Change instruments, macro assumptions, stresses, CI,
+and realism sheets in the workbook, save, then reload in Python with the load
+functions below. Do not construct or mutate loan terms in Python.
+
 ## Install
 
 From a local checkout:
@@ -29,49 +33,34 @@ Point the same loaders at **your filled country workbook** by changing the path.
 
 Template copyright: IMF/World Bank — [`NOTICE.md`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/NOTICE.md).
 
-## Minimal script: Ext + Macro → Output 1-1 / 1-2
+## Load packages (economist API)
+
+| Function | Loads |
+|----------|--------|
+| `load_core` | Input 4/5, Ext, Macro → `macro`, `external`, `ext_base`, `pub_base` |
+| `load_domestic` | Dom debt inputs |
+| `load_stress` | Input 6 + Input 7 ResFin + tailored params |
+| `load_rating` | CI Summary, triggers, Input 1 market |
+| `load_realism` | Imported data + Realism assumptions |
+| `load_probability` | Distress covariates (Output 6) |
+
+Day-1 needs only `load_core`. Typical DSA notebooks add `load_stress` and
+`load_rating`.
+
+## Minimal script: Output 1-1 / 1-2
 
 ```python
 from pathlib import Path
 
-from lic_dsf.dsa import (
-    BaselineExternalBook,
-    BaselinePublicBook,
-)
-from lic_dsf.load import (
-    load_external_debt_inputs,
-    load_instruments_from_workbook,
-    load_lc_nr_instruments_from_workbook,
-    load_macro_debt_inputs,
-)
+from lic_dsf.load import load_core
 from lic_dsf.output import external_dsa_panel, public_dsa_panel
-from lic_dsf.pv import PVPortfolio
-from lic_dsf.books import (
-    ExternalDebtBook,
-    MacroDebtBook,
-)
 
 workbook = Path("data/lic-dsf-template-2025-08-12.xlsx")
-
-instruments = load_instruments_from_workbook(workbook, include_zero_disbursement=True)
-lc_nr = load_lc_nr_instruments_from_workbook(workbook, include_zero_disbursement=True)
-external = ExternalDebtBook(
-    portfolio=PVPortfolio(instruments=tuple(instruments) + tuple(lc_nr)),
-    inputs=load_external_debt_inputs(workbook),
-)
-macro = MacroDebtBook(
-    inputs=load_macro_debt_inputs(workbook),
-    external=external,
-)
-
-ext_base = BaselineExternalBook(macro=macro, external=external)
-pub_base = BaselinePublicBook(macro=macro, external=external)
+macro, external, ext_base, pub_base = load_core(workbook)
 
 out_1_1 = external_dsa_panel(ext_base)  # Output 1-1 shape
 out_1_2 = public_dsa_panel(pub_base)  # Output 1-2 shape
 ```
-
-`include_zero_disbursement=True` keeps empty Input 4/5 slots so creditor grouping matches Excel row structure.
 
 ## Export panels to a spreadsheet
 
@@ -101,16 +90,15 @@ writes them. Pass `include={...}` to compute a subset of sheet titles (see
 | Mechanical risk rating | [risk-rating.qmd](risk-rating.qmd) | `demo/risk_rating.ipynb` |
 | All Outputs in one place | [excel-map.qmd](excel-map.qmd) | `demo/all_outputs.ipynb` |
 
-Quick stress sketch after the books above:
+Quick stress sketch after `load_core`:
 
 ```python
-from lic_dsf.load import load_input6_standard, load_input7_residual_params
+from lic_dsf.load import load_stress
 from lic_dsf.output import stress_external_panel
 from lic_dsf.stress import run_b1_gdp_external
 
-input6 = load_input6_standard(workbook)
-residual = load_input7_residual_params(workbook)
-stressed = run_b1_gdp_external(macro, external, input6, residual)
+stress = load_stress(workbook)
+stressed = run_b1_gdp_external(macro, external, stress.input6, stress.residual)
 stress_external_panel(stressed)
 ```
 

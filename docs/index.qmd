@@ -7,7 +7,11 @@ The `py-lic-dsf` library is an **unofficial** Python implementation of the [IMF/
 
 Created by [Teal Insights](https://tealinsights.com/) and (Nature Finance)[https://www.naturefinance.net/], `py-lic-dsf` aims to faithfully replicate the logic of the official August 12, 2025 ["New LIC-DSF template (Excel file)"](https://thedocs.worldbank.org/en/doc/f0ade6bcf85b6f98dbeb2c39a2b7770c-0360012025/original/LIC-DSF-IDA21-Template-08-12-2025-vf.xlsm) published by the World Bank.
 
-If you already know the workbook, this user guide maps sheets (Inputs, Ext/Dom/Macro, Baseline, stresses, CI, Outputs) to package modules and points at runnable demos.
+If you already know the workbook, this user guide maps sheets to a small set of
+**load packages**, then to analysis modules and demos.
+
+**Edit inputs in Excel**, save, and reload with `load_core` (plus
+`load_stress` / `load_rating` / … as needed). Do not edit instruments in Python.
 
 Bundled template: [`data/lic-dsf-template-2025-08-12.xlsx`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/data/lic-dsf-template-2025-08-12.xlsx) (see [`NOTICE.md`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/NOTICE.md) for IMF/World Bank provenance).
 
@@ -19,7 +23,7 @@ Each page links to the next at the bottom.
 |---|-----|----------------|------|
 | 1 | [Excel → Python map](01-excel-map.qmd) | Full sheet map | — |
 | 2 | [Getting started](02-getting-started.qmd) | End-to-end recipe | `all_outputs` |
-| 3 | [PV instruments](03-pv-instruments.qmd) | PV_Base / PV_LC_NR | `pv`, `lc_nr`, `portfolio` |
+| 3 | [PV instruments](03-pv-instruments.qmd) | PV_Base / PV_LC_NR via `load_core` | `ext_debt` |
 | 4 | [External debt book](04-ext-debt-module-design.qmd) | Ext_Debt_Data | `ext_debt` |
 | 5 | [Domestic debt indicators](05-dom-debt-indicators.qmd) | Dom_Debt_* | `dom_debt` |
 | 6 | [Macro-debt bridge](06-macro-debt-bridge.qmd) | Macro-Debt_Data | `macro_debt` |
@@ -43,12 +47,12 @@ Follow the [Getting Started](02-getting-started.qmd) and bookmark the [Excel Map
 
 | Idea | Role |
 |------|------|
-| **Loader** | Reads Input / sheet blocks from a `.xlsx` into typed inputs |
+| **Load package** | One of six entry points (`load_core`, `load_domestic`, `load_stress`, `load_rating`, `load_realism`, `load_probability`) |
 | **Book** | Sheet engine (`ExternalDebtBook`, `MacroDebtBook`, baseline/stress books) |
 | **Panel** | Output-shaped `pandas.DataFrame` (rows ≈ Excel indicators, columns = years) |
-| **Portfolio** | New MLT instruments behind Ext (`PVPortfolio`) |
+| **Portfolio** | New MLT instruments behind Ext (`external.portfolio` after `load_core`) |
 
-Typical flow: load workbook → build Ext + Macro books → baseline / stress panels → rating.
+Typical flow: edit Excel → `load_core` (+ other packages) → baseline / stress panels → rating.
 
 ## Verifying parity with Excel
 

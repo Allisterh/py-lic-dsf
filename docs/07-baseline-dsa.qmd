@@ -6,9 +6,11 @@ guide-section: "DSA & analysis"
 Excel analogues: **`Baseline - external`** / **`Baseline - public`**, feeding
 **Output 1-1** and **Output 1-2**.
 
-Package: `lic_dsf.dsa`. Consumes Macro + Ext books; does not recompute instrument
-PV schedules (`lic_dsf.pv`) or apply Input 6 shocks (`lic_dsf.stress`). Output
-DataFrames live in `lic_dsf.output`.
+Package: `lic_dsf.dsa`. Consumes Macro + Ext books from `load_core`; does not
+recompute instrument PV schedules or apply Input 6 shocks (`lic_dsf.stress`).
+Output DataFrames live in `lic_dsf.output`.
+
+**Edit baseline inputs in Excel**, save, then `load_core`.
 
 ## What you get
 
@@ -27,41 +29,11 @@ DataFrames live in `lic_dsf.output`.
 ```python
 from pathlib import Path
 
-from lic_dsf.dsa import (
-    BaselineExternalBook,
-    BaselinePublicBook,
-)
-from lic_dsf.load import (
-    load_external_debt_inputs,
-    load_instruments_from_workbook,
-    load_lc_nr_instruments_from_workbook,
-    load_macro_debt_inputs,
-)
+from lic_dsf.load import load_core
 from lic_dsf.output import external_dsa_panel, output_11_table, public_dsa_panel
-from lic_dsf.pv import PVPortfolio
-from lic_dsf.books import (
-    ExternalDebtBook,
-    MacroDebtBook,
-)
 
 workbook = Path("data/lic-dsf-template-2025-08-12.xlsx")
-ext = ExternalDebtBook(
-    portfolio=PVPortfolio(
-        instruments=tuple(
-            load_instruments_from_workbook(workbook, include_zero_disbursement=True)
-        )
-        + tuple(
-            load_lc_nr_instruments_from_workbook(
-                workbook, include_zero_disbursement=True
-            )
-        )
-    ),
-    inputs=load_external_debt_inputs(workbook),
-)
-macro = MacroDebtBook(inputs=load_macro_debt_inputs(workbook), external=ext)
-
-ext_base = BaselineExternalBook(macro=macro, external=ext)
-pub_base = BaselinePublicBook(macro=macro, external=ext)
+macro, external, ext_base, pub_base = load_core(workbook)
 
 external_dsa_panel(ext_base)
 public_dsa_panel(pub_base)

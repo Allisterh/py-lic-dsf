@@ -6,6 +6,9 @@ guide-section: "Debt modules"
 Excel analogues: hidden **`PV_Base`** tables (Input 4, USD) and **`PV_LC_NR1/2/3`**
 (Input 5, local-currency non-resident bonds converted to USD).
 
+**Edit instruments in Excel** (Input 4 / 5), save, then call `load_core`. The
+new-MLT portfolio is available as `external.portfolio`.
+
 ## What you get
 
 | Class | Role |
@@ -13,8 +16,7 @@ Excel analogues: hidden **`PV_Base`** tables (Input 4, USD) and **`PV_LC_NR1/2/3
 | `PresentValueInstrument` | One Input 4 financing instrument → `internal()` / `external()` schedules |
 | `LocalCurrencyNonResidentInstrument` | One Input 5 LC-NR bond → same canonical Output rows in USD |
 | `PVPortfolio` | Named collection; per-loan panels + new-debt aggregates |
-| `load_instruments_from_workbook` (`lic_dsf.load`) | Input 4 → list of `PresentValueInstrument` |
-| `load_lc_nr_instruments_from_workbook` (`lic_dsf.load`) | Input 5 → list of LC-NR instruments |
+| `load_core` (`lic_dsf.load`) | Loads Input 4/5 into Ext → inspect via `external.portfolio` |
 
 `PVPortfolio` owns **new MLT only**. Existing debt, ST, SDR, and Ext headlines
 live on [`ExternalDebtBook`](ext-debt-module-design.qmd).
@@ -24,13 +26,11 @@ live on [`ExternalDebtBook`](ext-debt-module-design.qmd).
 ```python
 from pathlib import Path
 
-from lic_dsf.load import load_instruments_from_workbook, load_lc_nr_instruments_from_workbook
-from lic_dsf.pv import PVPortfolio
+from lic_dsf.load import load_core
 
 workbook = Path("data/lic-dsf-template-2025-08-12.xlsx")
-instruments = load_instruments_from_workbook(workbook, include_zero_disbursement=True)
-lc_nr = load_lc_nr_instruments_from_workbook(workbook, include_zero_disbursement=True)
-portfolio = PVPortfolio(instruments=tuple(instruments) + tuple(lc_nr))
+macro, external, ext_base, pub_base = load_core(workbook)
+portfolio = external.portfolio
 
 # One loan's Output-shaped panel
 portfolio.external(portfolio.instruments[0].name)
@@ -49,14 +49,13 @@ interest, and amortization (see `PVPortfolio.aggregate_external()`).
 
 - Discount rate and year grid come from Input 1 / instrument tables (as loaded).
 - LC-NR uses FX(pa) / FX(eop) paths from the workbook, matching `PV_LC_NR*`.
-- Empty disbursement slots: pass `include_zero_disbursement=True` when you need
-  Ext creditor-group row alignment.
+- Empty Input 4/5 slots stay aligned with Ext creditor-group rows when loaded
+  through `load_core`.
 
-## Demos
+## Demo
 
-- [`demo/pv.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/pv.ipynb) — single USD instrument
-- [`demo/lc_nr.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/lc_nr.ipynb) — LC-NR
-- [`demo/portfolio.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/portfolio.ipynb) — combined portfolio
+[`demo/ext_debt.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/ext_debt.ipynb)
+— Ext headlines and portfolio after `load_core`.
 
 ---
 

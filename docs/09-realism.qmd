@@ -12,12 +12,14 @@ Package: `lic_dsf.realism`. Does not own Chart Data or risk ratings. Output
 (`DUCIR` / `DUCGDPR` / `DUCER`) are shared DSA math in
 `lic_dsf.dsa.dynamics` (re-exported from `lic_dsf.realism` for convenience).
 
+**Edit Realism / Imported data in Excel**, save, then `load_core` +
+`load_realism`.
+
 ## What you get
 
 | Piece | Role |
 |-------|------|
-| `load_imported_data` (`lic_dsf.load`) | `Imported data` vintage catalog |
-| `load_capital_assumptions` / `load_multiplier_grid` (`lic_dsf.load`) | Realism assumption blocks |
+| `load_realism` (`lic_dsf.load`) | Imported catalog, capital, multipliers, LIC histogram, invest-growth |
 | `forecast_error_panel` (`lic_dsf.output`) | Forecast error / debt-creating flows |
 | `fiscal_adjustment_panel` (`lic_dsf.output`) / `place_in_lic_histogram` | 3-year adjustment vs LIC programs |
 | `invest_growth_panel` (`lic_dsf.output`) | Capital stock / growth contribution |
@@ -28,22 +30,11 @@ Package: `lic_dsf.realism`. Does not own Chart Data or risk ratings. Output
 ```python
 from pathlib import Path
 
-from lic_dsf.dsa import BaselinePublicBook
+from lic_dsf.load import load_core, load_realism
 from lic_dsf.output import (
     fiscal_adjustment_panel,
     fiscal_multiplier_panel,
     placement_summary,
-)
-from lic_dsf.load import (
-    load_external_debt_inputs,
-    load_instruments_from_workbook,
-    load_lc_nr_instruments_from_workbook,
-    load_macro_debt_inputs,
-)
-from lic_dsf.pv import PVPortfolio
-from lic_dsf.books import (
-    ExternalDebtBook,
-    MacroDebtBook,
 )
 from lic_dsf.realism import (
     place_in_lic_histogram,
@@ -51,24 +42,11 @@ from lic_dsf.realism import (
 )
 
 workbook = Path("data/lic-dsf-template-2025-08-12.xlsx")
-ext = ExternalDebtBook(
-    portfolio=PVPortfolio(
-        instruments=tuple(
-            load_instruments_from_workbook(workbook, include_zero_disbursement=True)
-        )
-        + tuple(
-            load_lc_nr_instruments_from_workbook(
-                workbook, include_zero_disbursement=True
-            )
-        )
-    ),
-    inputs=load_external_debt_inputs(workbook),
-)
-macro = MacroDebtBook(inputs=load_macro_debt_inputs(workbook), external=ext)
-pub = BaselinePublicBook(macro=macro, external=ext)
+macro, external, ext_base, pub_base = load_core(workbook)
+realism = load_realism(workbook)
 
 first = macro.inputs.first_projection_year
-pd_pct = pub.primary_deficit_to_gdp()
+pd_pct = pub_base.primary_deficit_to_gdp()
 projected = projected_three_year_adjustment(pd_pct, first)
 placement_summary(place_in_lic_histogram(projected))
 fiscal_adjustment_panel(pd_pct, first)
@@ -77,8 +55,9 @@ pb_pct = 100.0 * macro.primary_balance() / macro.gdp_lcu()
 fiscal_multiplier_panel(pb_pct, macro.real_gdp_growth(), first)
 ```
 
-Forecast-error / invest-growth / imported vintages are wired in
-[`demo/all_outputs.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/all_outputs.ipynb).
+Use `realism.imported`, `realism.capital`, `realism.multipliers`, and
+`realism.invest_growth` for forecast-error / invest-growth panels (see
+[`demo/all_outputs.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/all_outputs.ipynb)).
 
 ## Excel cues
 

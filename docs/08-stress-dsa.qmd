@@ -12,6 +12,9 @@ financing lives in `lic_dsf.resfin`. This layer owns Input 6 / tailored
 **shocks**, **runners** (orchestration), and stressed **ratios**. Output 3
 DataFrames live in `lic_dsf.output`.
 
+**Edit Input 6 / 7 / tailored sheets in Excel**, save, then `load_core` +
+`load_stress`.
+
 ## Package map
 
 | Subpackage | Role |
@@ -26,8 +29,7 @@ DataFrames live in `lic_dsf.output`.
 
 | Piece | Role |
 |-------|------|
-| `load_input6_standard` (`lic_dsf.load`) | Input 6 shock sizes / rules |
-| `load_input7_residual_params` (`lic_dsf.load`) | Input 7 → `lic_dsf.resfin.ResidualFinancingParams` |
+| `load_stress` (`lic_dsf.load`) | Input 6 + Input 7 ResFin + tailored params |
 | `ResidualFinancingEngine` (`lic_dsf.resfin`) | ResFin overlays / public GFN fixed-point |
 | `run_standard_external_stress` | Suite of external B-tests (including B2) |
 | `run_standard_public_stress` | Public A1 and B1–B6 |
@@ -44,23 +46,11 @@ DataFrames live in `lic_dsf.output`.
 ```python
 from pathlib import Path
 
-from lic_dsf.load import (
-    load_external_debt_inputs,
-    load_input6_standard,
-    load_input7_residual_params,
-    load_instruments_from_workbook,
-    load_lc_nr_instruments_from_workbook,
-    load_macro_debt_inputs,
-)
+from lic_dsf.load import load_core, load_stress
 from lic_dsf.output import (
     output_31_table,
     stress_external_panel,
     stress_public_panel,
-)
-from lic_dsf.pv import PVPortfolio
-from lic_dsf.books import (
-    ExternalDebtBook,
-    MacroDebtBook,
 )
 from lic_dsf.stress import (
     run_b1_gdp_external,
@@ -69,38 +59,27 @@ from lic_dsf.stress import (
 )
 
 workbook = Path("data/lic-dsf-template-2025-08-12.xlsx")
-ext = ExternalDebtBook(
-    portfolio=PVPortfolio(
-        instruments=tuple(
-            load_instruments_from_workbook(workbook, include_zero_disbursement=True)
-        )
-        + tuple(
-            load_lc_nr_instruments_from_workbook(
-                workbook, include_zero_disbursement=True
-            )
-        )
-    ),
-    inputs=load_external_debt_inputs(workbook),
-)
-macro = MacroDebtBook(inputs=load_macro_debt_inputs(workbook), external=ext)
-input6 = load_input6_standard(workbook)
-residual = load_input7_residual_params(workbook)
+macro, external, ext_base, pub_base = load_core(workbook)
+stress = load_stress(workbook)
 
 # One external scenario
-b1_ext = run_b1_gdp_external(macro, ext, input6, residual)
+b1_ext = run_b1_gdp_external(macro, external, stress.input6, stress.residual)
 stress_external_panel(b1_ext)
 
 # Full external suite (dict of scenario id → book)
-suite = run_standard_external_stress(macro, ext, input6, residual)
+suite = run_standard_external_stress(
+    macro, external, stress.input6, stress.residual
+)
 
 # Public B1 GDP (ext MLT / dom MLT / ST ResFin split)
-b1_pub = run_b1_gdp_public(macro, ext, input6, residual)
+b1_pub = run_b1_gdp_public(macro, external, stress.input6, stress.residual)
 stress_public_panel(b1_pub)
 ```
 
 `output_31_table(ext_base, historical=…, external_stress=suite)` is the
 Excel-geometry SUT for Output 3-1. C-tests that Input 6 marks Off are
-omitted (Excel `n.a.`).
+omitted (Excel `n.a.`). Use `stress.tailored` with tailored runners when
+needed.
 
 ## Excel cues
 
