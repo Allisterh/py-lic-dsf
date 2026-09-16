@@ -27,7 +27,7 @@ Run Python through `uv run` (or a Jupyter kernel from this environment).
 
 ## Workbook
 
-Demos and tests use the macros-stripped template: `data/lic-dsf-template-2025-08-12.xlsx`
+Demos use the macros-stripped template: `data/lic-dsf-template-2025-08-12.xlsx`
 
 Point the same loaders at **your filled country workbook** by changing the path. Sheet layout must match the LIC-DSF template generation this library targets (see `data/PROVENANCE.md`).
 
@@ -104,9 +104,9 @@ stress_external_panel(stressed)
 
 ## Caveats
 
-- **Parity goal.** Numerics aim to match the Excel engine; treat differences as
-  bugs unless a doc/demo notes an intentional approximation (e.g. some public
-  stress GFN / ResFin feedback).
+- **Excel fidelity.** Numerics aim to match the Excel engine; treat unexpected
+  differences as bugs unless a doc/demo notes an intentional approximation
+  (e.g. some public stress GFN / ResFin feedback).
 - **Your workbook.** Loaders expect the official sheet structure. Renamed sheets
   or older template vintages may fail or misalign years.
 - **Not a replacement UI.** Official chart chrome, i18n labels, and VBA macros

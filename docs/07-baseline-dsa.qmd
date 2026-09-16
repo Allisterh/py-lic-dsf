@@ -40,8 +40,8 @@ public_dsa_panel(pub_base)
 output_11_table(ext_base)  # Excel row index; same years as the thin panel
 ```
 
-Headline panels keep economist labels. The Excel-shaped tables are the
-parity SUT (Output 1-1 / 1-2 numeric series vs live Excel).
+Headline panels keep economist labels. Full Excel-shaped tables
+(`output_11_table` / `output_12_table`) mirror Output 1-1 / 1-2 row geometry.
 
 ## Panel rows (familiar indicators)
 

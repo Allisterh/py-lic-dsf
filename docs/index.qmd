@@ -54,32 +54,12 @@ Follow the [Getting Started](02-getting-started.qmd) and bookmark the [Excel Map
 
 Typical flow: edit Excel → `load_core` (+ other packages) → baseline / stress panels → rating.
 
-## Verifying parity with Excel
-
-To verify that the library produces the same outputs as the official Excel template, we ship:
-
-1. **JSON parity cases** under `data/parity/cases/` — Excel-minted goldens compared on every CI run (`uv run pytest tests/test_parity_cases.py`). Remint with `uv run python -m tests.parity.mint` (see `data/parity/README.md`). This is the **primary** oracle path.
-2. **Legacy CSV compare helpers** under `tests/parity/excel_compare/` — optional side-by-side dumps used by `tests/test_compare_*.py`. Not part of the installed library; prefer JSON parity for new coverage.
-3. **Live Excel probes** (optional) — the oracle for minting/refreshing goldens. Requires Windows + Microsoft Excel + `xlwings`.
-
-Default `uv run pytest` stays Excel-free and uses committed goldens.
-
-To drive live Excel (mint or `live_excel` tests), install the `xlwings` extra:
-
-```bash
-uv sync --extra excel
-```
-
-Then run:
-
-```
-LIC_DSF_EXCEL=1 uv run pytest -m live_excel   # Windows + Excel
-```
-
 ## License note
 
 MIT covers the Python source. The bundled LIC-DSF template remains an IMF/World
 Bank work — see [`NOTICE.md`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/NOTICE.md) and [`data/PROVENANCE.md`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/data/PROVENANCE.md).
+
+Contributors: see the **Developer Guide** (testing & Excel parity).
 
 ---
 

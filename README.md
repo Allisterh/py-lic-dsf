@@ -18,7 +18,7 @@ Or from a local checkout:
 
 ```bash
 uv sync --all-groups
-# optional: live-Excel oracle on Windows
+# optional: Excel extras for contributors (see Developer Guide)
 uv sync --extra excel
 ```
 
@@ -58,10 +58,11 @@ Economist load packages: `load_core`, `load_domestic`, `load_stress`,
 | `src/lic_dsf/realism/` | Realism 1–4 math |
 | `src/lic_dsf/rating/` | CI thresholds, Chart Data, mechanical ratings |
 | `src/lic_dsf/scenario/` | Customized Scenario / Probability math |
-| `docs/` | Economist-facing guides (Excel → Python) |
+| `docs/` | Economist-facing user guide (Excel → Python) |
+| `developer/` | Contributor docs (testing, Excel parity) |
 | `demo/` | Runnable notebooks paired with `docs/` |
 | `data/` | Bundled LIC-DSF template (see `NOTICE.md`) |
-| `tests/` | Unit tests; `tests/parity/` golden-master helpers + legacy `excel_compare/` CSV dumps (not installed); `live_excel` is Windows + Excel only |
+| `tests/` | Unit and parity tests |
 
 ## License
 

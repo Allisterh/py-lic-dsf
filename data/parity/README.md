@@ -1,6 +1,9 @@
 # Parity JSON cases
 
-Excel-oracle differential cases for `lic_dsf`. Each directory under `cases/` holds:
+Excel-oracle differential cases for `lic_dsf`. See the site **Developer Guide →
+Testing & Excel parity** for the contributor-facing summary.
+
+Each directory under `cases/` holds:
 
 | File | Role |
 |---|---|

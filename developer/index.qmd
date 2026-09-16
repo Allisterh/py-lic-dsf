@@ -1,0 +1,19 @@
+---
+title: "Developer overview"
+---
+
+Notes for contributors maintaining `lic_dsf`: running tests, Excel parity
+goldens, and live-Excel minting. Economists using the library should follow the
+**User Guide** instead.
+
+## Contents
+
+| Page | Topic |
+|------|--------|
+| [Testing & Excel parity](testing-parity.qmd) | `pytest`, JSON parity cases, minting goldens, live Excel |
+
+Related repo paths:
+
+- `tests/` — unit tests and parity harness
+- `data/parity/` — committed case / expected goldens (see also
+  [`data/parity/README.md`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/data/parity/README.md))
