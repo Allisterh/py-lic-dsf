@@ -56,17 +56,17 @@ flowchart LR
 | Excel | Load / type | Demo |
 |-------|-------------|------|
 | Input 4 / 5, Ext, Macro | `load_core` → `macro`, `external`, baselines | [`baseline_dsa`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb) |
-| New MLT portfolio (after load) | `external.portfolio` | [`ext_debt`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/ext_debt.ipynb) |
-| `Dom_Debt_Data` / indicators | `load_domestic` → `DomesticDebtBook` | [`dom_debt`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/dom_debt.ipynb) |
+| New MLT portfolio (after load) | `external.portfolio` | [`baseline_dsa`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb) |
+| `Dom_Debt_Data` / indicators | `load_domestic` → `DomesticDebtBook` | — |
 | Baseline – external / public | from `load_core` | [`baseline_dsa`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb) |
 | Output 1-1 / 1-2 | `external_dsa_panel`, `public_dsa_panel` | [`baseline_dsa`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb) |
 | Input 6 / 7 / tailored | `load_stress` | [`stress_dsa`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/stress_dsa.ipynb) |
-| Output 2 / 3 | `stress_external_panel`, `stress_public_panel` | [`stress_dsa`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/stress_dsa.ipynb) |
+| Output 2 / 3 | `output_31_table`, `output_32_table` | [`stress_dsa`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/stress_dsa.ipynb) |
 | Realism 1–4 / Output 4 | `load_realism` + `lic_dsf.realism` / `output` | [`realism`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/realism.ipynb) |
-| CI / Trigger / Input 1 market | `load_rating` | [`risk_rating`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/risk_rating.ipynb) |
-| Chart Data / Output 5 / 7 | `ChartDataRegistry`, `risk_summary_panel` | [`output_7`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_7.ipynb), [`risk_rating`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/risk_rating.ipynb) |
+| CI / Trigger / Input 1 market | `load_rating` | [`output_5`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_5.ipynb) |
+| Chart Data / Output 5 | `ChartDataRegistry`, `moderate_panel`, `market_panel` | [`output_5`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_5.ipynb) |
 | Probability / Output 6 | `load_probability`, `probability_panel` | [`output_6`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_6.ipynb) |
-| Full Outputs tour | all of the above | [`all_outputs`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/all_outputs.ipynb) |
+| Output 7 risk summary | `risk_summary_panel` | [`output_7`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_7.ipynb) |
 
 ## Package roles (one line each)
 

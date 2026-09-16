@@ -57,7 +57,7 @@ fiscal_multiplier_panel(pb_pct, macro.real_gdp_growth(), first)
 
 Use `realism.imported`, `realism.capital`, `realism.multipliers`, and
 `realism.invest_growth` for forecast-error / invest-growth panels (see
-[`demo/all_outputs.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/all_outputs.ipynb)).
+[`demo/realism.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/realism.ipynb)).
 
 ## Excel cues
 

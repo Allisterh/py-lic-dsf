@@ -54,8 +54,8 @@ interest, and amortization (see `PVPortfolio.aggregate_external()`).
 
 ## Demo
 
-[`demo/ext_debt.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/ext_debt.ipynb)
-— Ext headlines and portfolio after `load_core`.
+[`demo/baseline_dsa.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb)
+— Ext / Macro baselines via `load_core` (inspect `external.portfolio` after load).
 
 ---
 

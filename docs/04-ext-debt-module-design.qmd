@@ -59,7 +59,8 @@ load_core
 
 ## Demo
 
-[`demo/ext_debt.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/ext_debt.ipynb)
+[`demo/baseline_dsa.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb)
+— Ext book and baselines via `load_core` (then `external.portfolio`).
 
 ---
 

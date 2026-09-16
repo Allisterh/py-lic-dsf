@@ -85,10 +85,12 @@ writes them. Pass `include={...}` to compute a subset of sheet titles (see
 
 | Goal | Doc | Demo |
 |------|-----|------|
-| Inspect Ext headlines / PV | [ext-debt-module-design.qmd](ext-debt-module-design.qmd) | `demo/ext_debt.ipynb` |
-| Stress paths (Input 6) | [stress-dsa.qmd](stress-dsa.qmd) | `demo/stress_dsa.ipynb` |
-| Mechanical risk rating | [risk-rating.qmd](risk-rating.qmd) | `demo/risk_rating.ipynb` |
-| All Outputs in one place | [excel-map.qmd](excel-map.qmd) | `demo/all_outputs.ipynb` |
+| Output 1-1 / 1-2 baseline | [baseline-dsa.qmd](baseline-dsa.qmd) | `demo/baseline_dsa.ipynb` |
+| Stress paths (Output 3) | [stress-dsa.qmd](stress-dsa.qmd) | `demo/stress_dsa.ipynb` |
+| Realism (Output 4) | [realism.qmd](realism.qmd) | `demo/realism.ipynb` |
+| Moderate / market (Output 5) | [risk-rating.qmd](risk-rating.qmd) | `demo/output_5.ipynb` |
+| Probability (Output 6) | [scenario.qmd](scenario.qmd) | `demo/output_6.ipynb` |
+| Risk summary (Output 7) | [risk-rating.qmd](risk-rating.qmd) | `demo/output_7.ipynb` |
 
 Quick stress sketch after `load_core`:
 
@@ -118,7 +120,7 @@ stress_external_panel(stressed)
 ## Jupyter
 
 ```bash
-uv run jupyter notebook demo/all_outputs.ipynb
+uv run jupyter notebook demo/baseline_dsa.ipynb
 ```
 
 Each demo resolves `REPO_ROOT` whether you start from the repo root or `demo/`.

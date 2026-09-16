@@ -89,9 +89,9 @@ risk_summary_panel(summary)
 ```
 
 Add stress scenario series the same way (`is_baseline=False`) before calling
-`compute_mechanical_ratings`. See also Output 5/7 sections in
-[`demo/all_outputs.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/all_outputs.ipynb). Dedicated Output 7
-panel: [`demo/output_7.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_7.ipynb).
+`compute_mechanical_ratings`. Output 5-1 / 5-2:
+[`demo/output_5.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_5.ipynb).
+Output 7: [`demo/output_7.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_7.ipynb).
 
 ## Excel cues
 
@@ -104,8 +104,8 @@ panel: [`demo/output_7.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/
 
 ## Demo
 
+- [`demo/output_5.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_5.ipynb) — Output 5-1 / 5-2
 - [`demo/output_7.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/output_7.ipynb) — Output 7 panel
-- [`demo/risk_rating.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/risk_rating.ipynb) — CI / Chart Data walkthrough
 
 ---
 

@@ -51,7 +51,8 @@ Dom indicator rows (e.g. debt/GDP, DS/revenues).
 
 ## Demo
 
-[`demo/dom_debt.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/dom_debt.ipynb)
+[`demo/baseline_dsa.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb)
+— Public DSA after `load_core`; domestic inputs via `load_domestic`.
 
 ---
 

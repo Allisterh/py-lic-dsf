@@ -54,7 +54,8 @@ align.
 
 ## Demo
 
-[`demo/macro_debt.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/macro_debt.ipynb)
+[`demo/baseline_dsa.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb)
+— Macro book and Output 1 panels via `load_core`.
 
 ---
 
