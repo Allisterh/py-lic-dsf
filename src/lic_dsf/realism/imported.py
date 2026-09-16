@@ -48,8 +48,9 @@ class ImportedDataCatalog:
 
     def get(self, series_code: str, vintage_year: int | str) -> VintageSeries | None:
         """Look up a series by code and vintage year label."""
+        want = str(vintage_year)
         for item in self.series.values():
-            if item.series_code == series_code and item.vintage_year == vintage_year:
+            if item.series_code == series_code and str(item.vintage_year) == want:
                 return item
         return None
 
