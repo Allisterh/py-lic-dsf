@@ -7,12 +7,14 @@ Excel analogue: **`Macro-Debt_Data`** — macro denominators (GDP, FX, exports,
 revenues), debt stocks in LCU/USD, GFN, fiscal balances, and the stitch of Ext
 PPG PV/service into the macro identity.
 
+**Edit Macro / related inputs in Excel**, save, then `load_core`.
+
 ## What you get
 
 | Piece | Role |
 |-------|------|
-| `MacroDebtBook` | Macro engine; optional `external=` for PPG stitch |
-| `load_macro_debt_inputs` (`lic_dsf.load`) | Input 3 / Macro blocks from the workbook |
+| `MacroDebtBook` | Macro engine; wired to Ext via `load_core` |
+| `load_core` (`lic_dsf.load`) | Macro + Ext + baseline books |
 
 Almost every downstream panel (baseline DSA, stress, realism) needs Macro.
 
@@ -21,36 +23,10 @@ Almost every downstream panel (baseline DSA, stress, realism) needs Macro.
 ```python
 from pathlib import Path
 
-from lic_dsf.load import (
-    load_external_debt_inputs,
-    load_instruments_from_workbook,
-    load_lc_nr_instruments_from_workbook,
-    load_macro_debt_inputs,
-)
-from lic_dsf.pv import PVPortfolio
-from lic_dsf.books import (
-    ExternalDebtBook,
-    MacroDebtBook,
-)
+from lic_dsf.load import load_core
 
 workbook = Path("data/lic-dsf-template-2025-08-12.xlsx")
-ext = ExternalDebtBook(
-    portfolio=PVPortfolio(
-        instruments=tuple(
-            load_instruments_from_workbook(workbook, include_zero_disbursement=True)
-        )
-        + tuple(
-            load_lc_nr_instruments_from_workbook(
-                workbook, include_zero_disbursement=True
-            )
-        )
-    ),
-    inputs=load_external_debt_inputs(workbook),
-)
-macro = MacroDebtBook(
-    inputs=load_macro_debt_inputs(workbook),
-    external=ext,
-)
+macro, external, ext_base, pub_base = load_core(workbook)
 
 macro.gdp_usd()
 macro.gdp_lcu()
@@ -62,8 +38,8 @@ macro.pv_external_lcu()
 macro.summary()  # when available — see demo
 ```
 
-Pass `external=` so PPG external stocks/PV/service align with Ext; without it,
-Macro still loads macro inputs but Ext-dependent series are incomplete.
+`load_core` always passes Ext into Macro so PPG external stocks/PV/service
+align.
 
 ## Excel cues
 
@@ -78,7 +54,8 @@ Macro still loads macro inputs but Ext-dependent series are incomplete.
 
 ## Demo
 
-[`demo/macro_debt.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/macro_debt.ipynb)
+[`demo/baseline_dsa.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb)
+— Macro book and Output 1 panels via `load_core`.
 
 ---
 

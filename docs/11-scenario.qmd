@@ -11,9 +11,13 @@ guide-section: "DSA & analysis"
 | **Probability approach** | Probability approach / **Output 6** | `scenario.probability` |
 
 They share almost no code. Stress tailored A2 may consume
-`CustomizedScenarioSpec`; that does not fold probability into stress.
+`CustomizedScenarioSpec` from `load_stress().tailored` / customized sheets;
+that does not fold probability into stress.
 Output 6 DataFrames live in `lic_dsf.output`. Input 8 SDR remains in Ext
 via books / `pv`.
+
+**Edit probability / customized sheets in Excel**, save, then
+`load_probability` (and `load_core` / `load_stress` as needed).
 
 ## Customized Scenario
 
@@ -38,17 +42,17 @@ registry = ChartDataRegistry()
 |-------|------|
 | `ProbabilityAssumptions` | Borderline bandwidth (and simple Φ helper) |
 | `DistressCovariates` / `distress_probability` | Excel `NORMDIST` regression (CPIA, growth, …) |
-| `load_distress_covariates` (`lic_dsf.load`) | Input 3 + Imported data `H77:H81` averages |
+| `load_probability` (`lic_dsf.load`) | Input 3 + Imported data probability averages |
 | `breach_probability` / `path_breach_probabilities` | Simple path vs threshold Φ |
 | `probability_panel` (`lic_dsf.output`) | Output 6-shaped probability summary |
 | `borderline_bands` | Near-threshold bands |
 
 ```python
-from lic_dsf.load import load_distress_covariates
+from lic_dsf.load import load_probability
 from lic_dsf.output import probability_panel
 from lic_dsf.scenario import ProbabilityAssumptions
 
-# probability_panel(..., covariates=load_distress_covariates(workbook))
+# probability_panel(..., covariates=load_probability(workbook))
 ```
 
 Full wiring with baseline/stress books is in

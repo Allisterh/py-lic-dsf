@@ -6,6 +6,11 @@ parser: google
 dynamic: false
 user_guide: docs
 
+sections:
+  - title: Developer Guide
+    dir: developer
+    navbar_after: User Guide
+
 announcement:
   content: "UNDER CONSTRUCTION: This *unofficial* Python implementation of the LIC DSF is preliminary and unstable, and the library API and behavior may change considerably before stable release!"
   type: warning
@@ -19,11 +24,23 @@ exclude:
 
 reference:
   - title: Load
-    desc: "Excel Input / CI / Realism sheet parsers."
+    desc: "Economist-facing workbook load packages. Edit inputs in Excel, then call these."
+    contents:
+      - load.load_core
+      - load.load_domestic
+      - load.load_stress
+      - load.load_rating
+      - load.load_realism
+      - load.load_probability
+      - load.StressLoad
+      - load.RatingLoad
+      - load.RealismLoad
+
+  - title: Load (advanced parsers)
+    desc: "Internal sheet parsers used by the packages above. Prefer the Load section for day-to-day work."
     contents:
       - load.load_capital_assumptions
       - load.load_ci_summary
-      - load.load_core
       - load.load_distress_covariates
       - load.load_domestic_debt_inputs
       - load.load_external_debt_inputs
@@ -38,6 +55,7 @@ reference:
       - load.load_multiplier_grid
       - load.load_tailored_params
       - load.load_trigger_flags
+      - load.load_invest_growth_series
 
   - title: Present Value
     desc: "Instrument templates, portfolios, and NPV helpers."

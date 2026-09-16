@@ -1,0 +1,68 @@
+---
+title: "Testing & Excel parity"
+---
+
+How we keep Python outputs aligned with the official LIC-DSF Excel template.
+
+## Run tests
+
+```bash
+uv run pytest                          # skips live_excel (Linux CI)
+LIC_DSF_EXCEL=1 uv run pytest -m live_excel   # Windows + Microsoft Excel
+```
+
+Default `uv run pytest` is Excel-free and uses committed goldens.
+
+## JSON parity cases
+
+Under `data/parity/cases/`, each directory holds:
+
+| File | Role |
+|------|------|
+| `case.json` | Case id, workbook path, cell overlays, probe catalog filters |
+| `expected.json` | Oracle-minted probe goldens (`oracle.excel_build` is `cached`, `grapher`, or `live`) |
+
+```bash
+uv run pytest tests/test_parity_cases.py
+uv run python -m tests.parity.report
+```
+
+Equality uses `tests.parity.equality` (`ABS_TOL=1e-6`, `REL_TOL=1e-12`).
+
+## Mint goldens (oracle only — never the Python SUT)
+
+```bash
+# Bootstrap / Linux: last-saved cached values from the bundled .xlsx
+uv run python -m tests.parity.mint --all --source cached
+
+# Fast proxy oracle (excel-grapher FormulaEvaluator)
+uv sync --extra grapher
+uv run python -m tests.parity.mint --case template-baseline-output11 --source grapher
+
+# Windows + Excel: live calculate (authoritative for spreadsheet-identity claims)
+uv sync --extra excel
+LIC_DSF_EXCEL=1 uv run python -m tests.parity.mint --case template-baseline-output11 --source live
+```
+
+`grapher` is a proxy oracle (`excel_build: "grapher"`), not Microsoft Excel.
+Prefer `live` when publishing identity claims.
+
+Mint never calls the Python SUT. After minting, `case.json` / `expected.json`
+carry `oracle.minted_at` and `template_sha`.
+
+Suggested Output 3 overlay inputs:
+[`data/parity/OUTPUT_3_INPUT_CATALOG.md`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/data/parity/OUTPUT_3_INPUT_CATALOG.md).
+
+Full mint notes (including WSL → Windows Excel COM):
+[`data/parity/README.md`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/data/parity/README.md).
+
+## Legacy CSV compares
+
+Optional side-by-side dumps under `tests/parity/excel_compare/` used by
+`tests/test_compare_*.py`. Prefer JSON parity for new coverage.
+
+## Geometry tables vs thin panels
+
+User-facing demos usually show thin panels (`external_dsa_panel`, …). Full
+Excel-geometry tables (`output_11_table`, `output_31_table`, …) are the
+parity surfaces compared to live Excel row layouts.

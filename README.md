@@ -18,72 +18,31 @@ Or from a local checkout:
 
 ```bash
 uv sync --all-groups
-# optional: live-Excel oracle on Windows
+# optional: Excel extras for contributors (see Developer Guide)
 uv sync --extra excel
 ```
 
-## Tests
-
-```bash
-uv run pytest                          # skips live_excel (Linux CI)
-LIC_DSF_EXCEL=1 uv run pytest -m live_excel   # Windows + Microsoft Excel
-```
-
-### Excel-oracle parity cases
-
-JSON cases under [`data/parity/cases/`](data/parity/cases/) compare Python to oracle-minted goldens (`expected.json`). Equality uses abs ≤ `1e-6` or relative ≤ `1e-12` (`tests.parity.equality`).
-
-```bash
-uv run pytest tests/test_parity_cases.py
-uv run python -m tests.parity.mint --all --source cached              # template cache
-uv run python -m tests.parity.mint --case … --source grapher          # excel-grapher proxy
-LIC_DSF_EXCEL=1 uv run python -m tests.parity.mint --all --source live  # Windows remint
-uv run python -m tests.parity.report                                  # corpus pass-rate summary
-```
-
-Install the grapher extra for `--source grapher`: `uv sync --extra grapher`. See [`data/parity/README.md`](data/parity/README.md).
 
 ## Quick Start
 
-Follow the [Getting Started](02-getting-started.qmd) and bookmark the [Excel Map](01-excel-map.qmd) to understand how the library maps to sheets.
+Edit inputs in the LIC-DSF **Excel** workbook, save, then load in Python.
+Follow the [Getting Started](02-getting-started.qmd) and bookmark the [Excel Map](01-excel-map.qmd).
 
 ```python
 from pathlib import Path
 
-from lic_dsf.dsa import (
-    BaselineExternalBook,
-    BaselinePublicBook,
-)
-from lic_dsf.load import (
-    load_external_debt_inputs,
-    load_instruments_from_workbook,
-    load_lc_nr_instruments_from_workbook,
-    load_macro_debt_inputs,
-)
+from lic_dsf.load import load_core
 from lic_dsf.output import external_dsa_panel, public_dsa_panel
-from lic_dsf.pv import PVPortfolio
-from lic_dsf.books import (
-    ExternalDebtBook,
-    MacroDebtBook,
-)
 
 workbook = Path("data/lic-dsf-template-2025-08-12.xlsx")
-instruments = load_instruments_from_workbook(workbook, include_zero_disbursement=True)
-lc_nr = load_lc_nr_instruments_from_workbook(workbook, include_zero_disbursement=True)
-external = ExternalDebtBook(
-    portfolio=PVPortfolio(instruments=tuple(instruments) + tuple(lc_nr)),
-    inputs=load_external_debt_inputs(workbook),
-)
-macro = MacroDebtBook(
-    inputs=load_macro_debt_inputs(workbook),
-    external=external,
-)
-ext_base = BaselineExternalBook(macro=macro, external=external)
-pub_base = BaselinePublicBook(macro=macro, external=external)
+macro, external, ext_base, pub_base = load_core(workbook)
 
 external_dsa_panel(ext_base)  # Output 1-1
 public_dsa_panel(pub_base)  # Output 1-2
 ```
+
+Economist load packages: `load_core`, `load_domestic`, `load_stress`,
+`load_rating`, `load_realism`, `load_probability`.
 
 ## Repo Layout
 
@@ -92,17 +51,18 @@ public_dsa_panel(pub_base)  # Output 1-2
 | `src/lic_dsf/pv/` | Instruments, portfolios, LC-NR, NPV helpers |
 | `src/lic_dsf/books/` | Ext / Dom / Macro debt books |
 | `src/lic_dsf/resfin/` | Input 7 residual financing (params, overlays, engine) |
-| `src/lic_dsf/load/` | Excel Input / CI / Realism sheet parsers |
+| `src/lic_dsf/load/` | Economist load packages + internal sheet parsers |
 | `src/lic_dsf/dsa/` | Baseline sustainability ratios |
 | `src/lic_dsf/output/` | Output-sheet DataFrames (panels and Excel-geometry tables) |
 | `src/lic_dsf/stress/` | Input 6 stresses (uses `resfin`) |
 | `src/lic_dsf/realism/` | Realism 1–4 math |
 | `src/lic_dsf/rating/` | CI thresholds, Chart Data, mechanical ratings |
 | `src/lic_dsf/scenario/` | Customized Scenario / Probability math |
-| `docs/` | Economist-facing guides (Excel → Python) |
+| `docs/` | Economist-facing user guide (Excel → Python) |
+| `developer/` | Contributor docs (testing, Excel parity) |
 | `demo/` | Runnable notebooks paired with `docs/` |
 | `data/` | Bundled LIC-DSF template (see `NOTICE.md`) |
-| `tests/` | Unit tests; `tests/parity/` golden-master helpers + legacy `excel_compare/` CSV dumps (not installed); `live_excel` is Windows + Excel only |
+| `tests/` | Unit and parity tests |
 
 ## License
 

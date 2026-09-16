@@ -7,14 +7,16 @@ Excel analogue: **`Ext_Debt_Data`** — existing PPG external MLT, new portfolio
 MLT, ST / locally issued / SDR pieces, creditor groups, grant element, and
 PPG PV headlines (e.g. Ext R391).
 
+**Edit Ext / Input 4–5 in Excel**, save, then `load_core`.
+
 ## What you get
 
 | Piece | Role |
 |-------|------|
-| `ExternalDebtBook` | Sheet engine: `portfolio` + `ExternalDebtInputs` |
-| `load_external_debt_inputs` (`lic_dsf.load`) | Existing debt / Ext input blocks from the workbook |
+| `ExternalDebtBook` | Sheet engine: `portfolio` + Ext inputs |
+| `load_core` (`lic_dsf.load`) | Wires portfolio + Ext + Macro + baselines |
 | `PVPortfolio` | New MLT schedules ([pv-instruments.qmd](pv-instruments.qmd)) |
-| `load_input7_residual_params` (`lic_dsf.load`) | Input 7 residual-financing terms (used heavily in stress) |
+| `load_stress` (`lic_dsf.load`) | Includes Input 7 residual-financing terms used in stress |
 
 Creditor grouping, grant element, debt evolution, and memorandum panels are
 methods / helpers on or under this book — not on `PVPortfolio`.
@@ -24,34 +26,17 @@ methods / helpers on or under this book — not on `PVPortfolio`.
 ```python
 from pathlib import Path
 
-from lic_dsf.load import (
-    load_external_debt_inputs,
-    load_instruments_from_workbook,
-    load_lc_nr_instruments_from_workbook,
-)
-from lic_dsf.pv import PVPortfolio
-from lic_dsf.books import ExternalDebtBook
+from lic_dsf.load import load_core
 
 workbook = Path("data/lic-dsf-template-2025-08-12.xlsx")
-portfolio = PVPortfolio(
-    instruments=tuple(
-        load_instruments_from_workbook(workbook, include_zero_disbursement=True)
-    )
-    + tuple(
-        load_lc_nr_instruments_from_workbook(workbook, include_zero_disbursement=True)
-    )
-)
-ext = ExternalDebtBook(
-    portfolio=portfolio,
-    inputs=load_external_debt_inputs(workbook),
-)
+macro, external, ext_base, pub_base = load_core(workbook)
 
-ext.total_pv_of_debt()  # Ext R391-style PPG PV
-ext.new_mlt_pv()  # new portfolio only
-ext.existing_mlt_pv()  # existing by creditor + Total
-ext.new_disbursements_by_creditor()
-ext.debt_evolution()
-ext.summary()  # compact headline table when available
+external.total_pv_of_debt()  # Ext R391-style PPG PV
+external.new_mlt_pv()  # new portfolio only
+external.existing_mlt_pv()  # existing by creditor + Total
+external.new_disbursements_by_creditor()
+external.debt_evolution()
+external.summary()  # compact headline table when available
 ```
 
 ## Excel cues
@@ -62,21 +47,20 @@ ext.summary()  # compact headline table when available
 | New MLT PV / stock | R279 / R329 |
 | Existing MLT PV | R242 block |
 | Debt service aggregates | R394–396 |
-| Residual financing terms | Input 7 (via `load_input7_residual_params`) |
+| Residual financing terms | Input 7 (via `load_stress`) |
 
 ## Architecture (brief)
 
 ```text
-PVPortfolio (new loans)
-        +
-ExternalDebtInputs (existing, ST, SDR, FX, …)
-        ↓
-ExternalDebtBook  →  MacroDebtBook / Baseline DSA
+load_core
+   → ExternalDebtBook (portfolio + Ext inputs)
+   → MacroDebtBook / Baseline DSA
 ```
 
 ## Demo
 
-[`demo/ext_debt.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/ext_debt.ipynb)
+[`demo/baseline_dsa.ipynb`](https://github.com/Teal-Insights/py-lic-dsf/blob/main/demo/baseline_dsa.ipynb)
+— Ext book and baselines via `load_core` (then `external.portfolio`).
 
 ---
 
