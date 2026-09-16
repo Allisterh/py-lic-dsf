@@ -23,7 +23,7 @@ DataFrames live in `lic_dsf.output`.
 | `stress.runner` | Wire shocks → ResFin → ratios |
 | `stress.ratios` | Stressed Ext / public sustainability ratios |
 | `stress.facade` / `suite` | Thin public `run_*` and Output 3 builders |
-| `lic_dsf.resfin` | Residual financing (not under `stress/`) |
+| `lic_dsf.resfin` | Residual financing |
 
 ## What you get
 
